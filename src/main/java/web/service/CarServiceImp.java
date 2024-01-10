@@ -22,6 +22,9 @@ public class CarServiceImp implements CarService {
 
     @Override
     public List<Car> listCars(Integer count) {
+        if (cars.size() <= count) {
+            return cars;
+        }
         return cars.subList(0, count);
     }
 }
