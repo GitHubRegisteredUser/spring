@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/html"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>User info</title>
+    <title>User administration</title>
 </head>
 <body>
 <table>
@@ -20,7 +19,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:object="${user}">
+    <tr th:each="user : ${users}">
         <td th:text="${user.id}"></td>
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
@@ -28,13 +27,14 @@
         <td th:text="${user.username}"></td>
         <td th:text="${user.password}"></td>
         <td th:text="${user.roles}"></td>
+        <td><a th:href="@{/admin/editUser/(id=${user.id})}">Edit</a></td>
+        <td><a th:href="@{/admin/deleteUser/(id=${user.id})}">Delete</a>
+        </td>
     </tr>
     </tbody>
 </table>
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    <a href="/admin">Back to admin panel</a>
-</div>
-<p><a href="/">To main</a></p>
+<p><a href="/admin/addUser">Add a new user</a></p>
+<p><a href="/admin">Back to admin panel</a></p>
 <p><a href="/logout">Logout</a></p>
 </body>
 </html>
