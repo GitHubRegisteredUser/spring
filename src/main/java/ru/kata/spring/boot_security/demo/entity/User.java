@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Email can not be blank")
     private String email;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     @NotBlank(message = "Username can not be blank")
     private String username;
 
@@ -141,6 +142,25 @@ public class User implements UserDetails {
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id
+                && firstName.equals(user.firstName)
+                && lastName.equals(user.lastName)
+                && email.equals(user.email)
+                && username.equals(user.username)
+                && password.equals(user.password)
+                && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, username, password, roles);
     }
 
 }

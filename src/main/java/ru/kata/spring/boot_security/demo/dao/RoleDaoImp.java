@@ -4,7 +4,9 @@ import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.entity.Role;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -15,20 +17,21 @@ public class RoleDaoImp implements RoleDao {
 
     @Override
     public Role findByName(String name) {
-        List<Role> roles = entityManager
-                .createQuery("SELECT r FROM Role r where r.name = '" + name + "'", Role.class)
-                .getResultList();
-
-        if (roles.isEmpty()) {
+        try {
+            return entityManager
+                    .createQuery("SELECT r FROM Role r where r.name = '" + name + "'", Role.class)
+                    .getSingleResult();
+        } catch (
+                NoResultException e) {
             return null;
         }
-
-        return roles.get(0);
     }
 
     @Override
-    public void saveRole(Role role) {
-        entityManager.persist(role);
+    public List<Role> getAllRoles() {
+        String jpql = "SELECT r FROM Role r";
+        TypedQuery<Role> query = entityManager.createQuery(jpql, Role.class);
+        return query.getResultList();
     }
 
 }

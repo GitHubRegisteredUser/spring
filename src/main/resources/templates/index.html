@@ -9,7 +9,6 @@
 <body>
 <div sec:authorize="!isFullyAuthenticated()">
     <a href="/login">Login</a>
-    <a href="/signUp/">Sign up</a>
 </div>
 <div sec:authorize="isFullyAuthenticated()">
     <p><a href="/user">My profile</a></p>

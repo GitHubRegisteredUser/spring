@@ -7,21 +7,20 @@
 </head>
 <body>
 <form action="#"
-      th:action="@{/admin/updateUser/(id=${user.id})}"
       th:object="${user}"
-      method="post">
+      th:action="@{/admin/updateUser/(id=${user.id})}"
+      th:method="patch">
     <label for="first_name">First name</label>
     <input type="text" th:field="*{firstName}" id="first_name"
            placeholder="First name">
-    <p th:if="${#fields.hasErrors('firstName')}"
-       th:errors="*{firstName}"></p>
+    <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
     <label for="last_name">Last name</label>
     <input type="text" th:field="*{lastName}" id="last_name"
            placeholder="Last Name">
-    <p th:if="${#fields.hasErrors('lastName')}"
-       th:errors="*{lastName}"></p>
+    <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
     <label for="email">Email</label>
-    <input type="text" th:field="*{email}" id="email" placeholder="Email">
+    <input type="text" th:field="*{email}" id="email"
+           placeholder="Email">
     <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
     <label for="username">Username</label>
     <input type="text" th:field="*{username}" id="username"
@@ -32,8 +31,12 @@
            placeholder="Password">
     <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
     <label for="roles">Roles</label>
-    <input type="text" th:field="*{roles}" id="roles"
-           placeholder="Roles">
+    <select th:field="*{roles}" id="roles" multiple="multiple">
+        <option th:each="role : ${allRoles}"
+                th:value="${role}"
+                th:text="${role}">
+        </option>
+    </select>
     <p th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></p>
     <input type="submit" value="Edit User">
 </form>

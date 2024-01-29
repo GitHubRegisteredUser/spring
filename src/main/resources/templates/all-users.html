@@ -27,8 +27,17 @@
         <td th:text="${user.username}"></td>
         <td th:text="${user.password}"></td>
         <td th:text="${user.roles}"></td>
-        <td><a th:href="@{/admin/editUser/(id=${user.id})}">Edit</a></td>
-        <td><a th:href="@{/admin/deleteUser/(id=${user.id})}">Delete</a>
+        <td>
+            <a th:href="@{/admin/editUser/(id=${user.id})}">
+                <button type="submit">Edit</button>
+            </a>
+        </td>
+        <td>
+            <form th:object="${user}"
+                  th:action="@{/admin/deleteUser/(id=${user.id})}"
+                  th:method="delete">
+                <button type="submit">Delete</button>
+            </form>
         </td>
     </tr>
     </tbody>

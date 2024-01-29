@@ -7,10 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
-import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,12 +44,9 @@ public class UserServiceImp implements UserService {
             throw new Exception("Username already exists");
         }
 
-        Role role = roleService.findByName("ROLE_USER");
-        if (role == null) {
-            role = new Role("ROLE_USER");
-        }
-
-        user.setRoles(Collections.singleton(role));
+        user.setRoles(user.getRoles().stream()
+                .map(r -> roleService.findByName(r.getName()))
+                .collect(Collectors.toSet()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDao.saveUser(user);
     }
@@ -66,7 +61,7 @@ public class UserServiceImp implements UserService {
     public void updateUser(User user) {
         user.setRoles(user.getRoles()
                 .stream()
-                .map(r -> roleService.findByName(r.getName()) == null ? r : roleService.findByName(r.getName()))
+                .map(r -> roleService.findByName(r.getName()))
                 .collect(Collectors.toSet()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDao.updateUser(user);

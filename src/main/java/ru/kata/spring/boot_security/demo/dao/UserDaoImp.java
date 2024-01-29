@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.entity.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -16,15 +17,13 @@ public class UserDaoImp implements UserDao {
 
     @Override
     public User findByUsername(String username) {
-        List<User> users = entityManager
-                .createQuery("SELECT u FROM User u where u.username = '" + username + "'", User.class)
-                .getResultList();
-
-        if (users.isEmpty()) {
+        try {
+            return entityManager
+                    .createQuery("SELECT u FROM User u where u.username = '" + username + "'", User.class)
+                    .getSingleResult();
+        } catch (NoResultException e) {
             return null;
         }
-
-        return users.get(0);
     }
 
     @Override
