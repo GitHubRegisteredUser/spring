@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.entity.MyList;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
@@ -26,11 +27,13 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public String showAllUsers(Model model) {
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
-        return "all-users";
+        MyList myList = new MyList();
+        myList.setUserList(userService.getAllUsers());
+        myList.setRoleList(roleService.getAllRoles());
+        model.addAttribute("myList", myList);
+        return "admin";
     }
 
     @GetMapping("/addUser")
@@ -44,8 +47,10 @@ public class AdminController {
 
     @PostMapping("/saveUser")
     public String saveUser(@Valid @ModelAttribute("user") User user,
-                           BindingResult bindingResult) throws Exception {
-        if (bindingResult.hasErrors()) {
+                           BindingResult userBindingResult, Model model) throws Exception {
+        if (userBindingResult.hasErrors()) {
+            List<Role> allRoles = roleService.getAllRoles();
+            model.addAttribute("allRoles", allRoles);
             return "add-user";
         }
 
@@ -53,23 +58,18 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/editUser")
-    public String editUser(@RequestParam("id") long id, Model model) {
-        User user = userService.getUser(id);
-        List<Role> allRoles = roleService.getAllRoles();
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", allRoles);
-        return "edit-user";
-    }
-
-    @PatchMapping("/updateUser")
-    public String updateUser(@Valid @ModelAttribute("user") User user,
-                             BindingResult bindingResult) {
+    @PatchMapping("/updateUsers")
+    public String updateUsers(@Valid @ModelAttribute("myList") MyList myList,
+                              BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            return "edit-user";
+            myList = new MyList();
+            myList.setUserList(userService.getAllUsers());
+            myList.setRoleList(roleService.getAllRoles());
+            model.addAttribute("myList", myList);
+            return "admin";
         }
 
-        userService.updateUser(user);
+        userService.updateAll(myList.getUserList());
         return "redirect:/admin";
     }
 

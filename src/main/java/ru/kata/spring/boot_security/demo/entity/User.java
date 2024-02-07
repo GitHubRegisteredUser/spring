@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -26,12 +27,12 @@ public class User implements UserDetails {
     @NotBlank(message = "Last name can not be blank")
     private String lastName;
 
-    @Column(name = "email")
-    @NotBlank(message = "Email can not be blank")
-    private String email;
+    @Column(name = "age")
+    @NotNull(message = "Age can not be null")
+    private byte age;
 
     @Column(name = "username", unique = true)
-    @NotBlank(message = "Username can not be blank")
+    @NotBlank(message = "Email can not be blank")
     private String username;
 
     @Column(name = "password")
@@ -75,6 +76,15 @@ public class User implements UserDetails {
         return getRoles();
     }
 
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public long getId() {
         return id;
     }
@@ -99,20 +109,12 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
+    public byte getAge() {
+        return age;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAge(byte age) {
+        this.age = age;
     }
 
     public String getPassword() {
@@ -137,7 +139,7 @@ public class User implements UserDetails {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
+                ", age=" + age +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
@@ -150,9 +152,9 @@ public class User implements UserDetails {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id
+                && age == user.age
                 && firstName.equals(user.firstName)
                 && lastName.equals(user.lastName)
-                && email.equals(user.email)
                 && username.equals(user.username)
                 && password.equals(user.password)
                 && Objects.equals(roles, user.roles);
@@ -160,7 +162,7 @@ public class User implements UserDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, username, password, roles);
+        return Objects.hash(id, firstName, lastName, age, username, password, roles);
     }
 
 }
