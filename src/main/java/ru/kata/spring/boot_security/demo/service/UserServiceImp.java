@@ -36,10 +36,10 @@ public class UserServiceImp implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(User user) throws Exception {
+    public void saveUser(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
-            throw new Exception("User with this email already exists");
+            throw new RuntimeException("User with this email already exists");
         }
 
         user.setPassword(encoder.encode(user.getPassword()));

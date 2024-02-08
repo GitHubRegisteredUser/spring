@@ -9,7 +9,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    void saveUser(User user) throws Exception;
+    void saveUser(User user);
 
     User getUser(long id);
 

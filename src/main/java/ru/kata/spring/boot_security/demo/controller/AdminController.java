@@ -47,7 +47,7 @@ public class AdminController {
 
     @PostMapping("/saveUser")
     public String saveUser(@Valid @ModelAttribute("user") User user,
-                           BindingResult userBindingResult, Model model) throws Exception {
+                           BindingResult userBindingResult, Model model) {
         if (userBindingResult.hasErrors()) {
             List<Role> allRoles = roleService.getAllRoles();
             model.addAttribute("allRoles", allRoles);
