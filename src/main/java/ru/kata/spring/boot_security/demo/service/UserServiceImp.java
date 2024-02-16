@@ -34,12 +34,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        if (users.isEmpty()) {
-            throw new RuntimeException("No users found");
-        }
-
-        return users;
+        return userRepository.findAll();
     }
 
     @Override

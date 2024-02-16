@@ -10,13 +10,6 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
-    public Role() {
-    }
-
-    public Role(String name) {
-        this.name = name;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,6 +21,13 @@ public class Role implements GrantedAuthority {
     @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
+    public Role() {
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
 
     @Override
     public String getAuthority() {
