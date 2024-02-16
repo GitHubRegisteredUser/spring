@@ -4,8 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -29,6 +28,8 @@ public class User implements UserDetails {
 
     @Column(name = "age")
     @NotNull(message = "Age can not be null")
+    @Min(value = 18, message = "Age can not be less than 18")
+    @Max(value = 100, message = "Age can not be more than 100")
     private byte age;
 
     @Column(name = "username", unique = true)

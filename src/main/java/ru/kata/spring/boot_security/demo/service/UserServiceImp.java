@@ -11,16 +11,19 @@ import ru.kata.spring.boot_security.demo.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleService roleService;
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImp(UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public UserServiceImp(UserRepository userRepository, RoleService roleService, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
         this.encoder = encoder;
     }
 
@@ -31,7 +34,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        if (users.isEmpty()) {
+            throw new RuntimeException("No users found");
+        }
+
+        return users;
     }
 
     @Override
@@ -42,32 +50,35 @@ public class UserServiceImp implements UserService {
             throw new RuntimeException("User with this email already exists");
         }
 
+        user.setRoles(user.getRoles().stream()
+                .map(r -> roleService.findByName(r.getName()) == null
+                        ? r : roleService.findByName(r.getName()))
+                .collect(Collectors.toSet()));
         user.setPassword(encoder.encode(user.getPassword()));
+
         userRepository.save(user);
     }
 
     @Override
     public User getUser(long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        if (user.isEmpty()) {
+            throw new RuntimeException("User with id = " + id + " does not exist");
+        }
+
+        return user.get();
     }
 
     @Override
     @Transactional
     public void updateUser(User user) {
+        user.setRoles(user.getRoles().stream()
+                .map(r -> roleService.findByName(r.getName()) == null
+                        ? r : roleService.findByName(r.getName()))
+                .collect(Collectors.toSet()));
         user.setPassword(encoder.encode(user.getPassword()));
+
         userRepository.save(user);
-    }
-
-    @Override
-    public void updateAll(List<User> users) {
-        users.forEach(u -> {
-            if (!encoder.matches(u.getPassword(),
-                    encoder.encode(getUser(u.getId()).getPassword())))
-                u.setPassword(encoder.encode(u.getPassword()));
-        });
-
-        userRepository.saveAll(users);
     }
 
     @Override
